@@ -45,7 +45,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh "echo "completed""
+                sh "echo 'completed'"
             }
         }
 
