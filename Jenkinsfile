@@ -8,11 +8,11 @@ pipeline {
         SCANNER_HOME = tool 'sonarscanner'
         APP_NAME = "reddit-clone-pipeline"
         RELEASE = "1.0.0"
- //        DOCKER_USER = "ashfaque9x"
- //        DOCKER_PASS = 'dockerhub'
- //        IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
- //        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-	// JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
+	registryCredential = 'ecr:us-east-2:awscreds'
+        appRegistry = "test-build"
+        vprofileRegistry = "https://951401132355.dkr.ecr.us-east-2.amazonaws.com"
+        // cluster = "vprofile"
+        // service = "vprofileappsvc"
     }
     stages {
         stage('clean workspace') {
@@ -50,57 +50,23 @@ pipeline {
             }
         }
 
-  //       stage('TRIVY FS SCAN') {
-  //           steps {
-  //               sh "trivy fs . > trivyfs.txt"
-  //            }
-  //        }
-	 // stage("Build & Push Docker Image") {
-  //            steps {
-  //                script {
-  //                    docker.withRegistry('',DOCKER_PASS) {
-  //                        docker_image = docker.build "${IMAGE_NAME}"
-  //                    }
-  //                    docker.withRegistry('',DOCKER_PASS) {
-  //                        docker_image.push("${IMAGE_TAG}")
-  //                        docker_image.push('latest')
-  //                    }
-  //                }
-  //            }
-  //        }
-	 // stage("Trivy Image Scan") {
-  //            steps {
-  //                script {
-	 //              sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ashfaque9x/reddit-clone-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table > trivyimage.txt')
-  //                }
-  //            }
-  //        }
-	 // stage ('Cleanup Artifacts') {
-  //            steps {
-  //                script {
-  //                     sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-  //                     sh "docker rmi ${IMAGE_NAME}:latest"
-  //                }
-  //            }
-  //        }
-	 // stage("Trigger CD Pipeline") {
-  //           steps {
-  //               script {
-  //                   sh "curl -v -k --user clouduser:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-65-2-187-142.ap-south-1.compute.amazonaws.com:8080/job/Reddit-Clone-CD/buildWithParameters?token=gitops-token'"
-  //               }
-  //           }
-  //        }
-  //    }
-  //    post {
-  //       always {
-  //          emailext attachLog: true,
-  //              subject: "'${currentBuild.result}'",
-  //              body: "Project: ${env.JOB_NAME}<br/>" +
-  //                  "Build Number: ${env.BUILD_NUMBER}<br/>" +
-  //                  "URL: ${env.BUILD_URL}<br/>",
-  //              to: 'ashfaque.s510@gmail.com',                              
-  //              attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
-  //       }
-     }
-    
+	stage('Build App Image') {
+       	    steps {
+                script {
+                    dockerImage = docker.build( appRegistry + ":$BUILD_NUMBER", "./Docker-files/app/multistage/")
+                }
+     	    }
+    	}
+
+    	// stage('Upload App Image') {
+     //        steps{
+     //        script {
+     //          docker.withRegistry( vprofileRegistry, registryCredential ) {
+     //            dockerImage.push("$BUILD_NUMBER")
+     //            dockerImage.push('latest')
+     //          }
+     //        }
+     //      }
+     // }
+     }    
 }
