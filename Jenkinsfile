@@ -10,7 +10,7 @@ pipeline {
         RELEASE = "1.0.0"
 	registryCredential = 'ecr:us-east-2:awscreds'
         appRegistry = "test-build"
-        vprofileRegistry = "https://951401132355.dkr.ecr.us-east-2.amazonaws.com"
+        // vprofileRegistry = "https://951401132355.dkr.ecr.us-east-2.amazonaws.com"
         // cluster = "vprofile"
         // service = "vprofileappsvc"
     }
@@ -53,7 +53,7 @@ pipeline {
 	stage('Build App Image') {
        	    steps {
                 script {
-                    dockerImage = docker.build( appRegistry + ":$BUILD_NUMBER", "./Docker-files/app/multistage/")
+                    dockerImage = docker.build( appRegistry + ":$BUILD_NUMBER")
                 }
      	    }
     	}
