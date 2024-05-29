@@ -8,7 +8,7 @@ pipeline {
         SCANNER_HOME = tool 'sonarscanner'
         APP_NAME = "reddit-clone-pipeline"
         RELEASE = "1.0.0"
-	registryCredential = 'ecr:us-east-2:awscreds'
+	// registryCredential = 'ecr:us-east-2:awscreds'
         appRegistry = "test-build"
         // vprofileRegistry = "https://951401132355.dkr.ecr.us-east-2.amazonaws.com"
         // cluster = "vprofile"
